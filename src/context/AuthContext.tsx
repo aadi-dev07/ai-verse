@@ -5,7 +5,7 @@ type BusinessSize = "Solo" | "SMB" | "Enterprise";
 
 interface UserProfile {
   email: string;
-  fullName: string; // Added fullName field
+  fullName: string;
   businessName: string;
   industry: string;
   businessSize: BusinessSize;
@@ -35,7 +35,11 @@ const AuthContext = createContext<AuthContextType>(defaultContext);
 
 export const useAuth = () => useContext(AuthContext);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
@@ -46,7 +50,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsAuthenticated(true);
     setUserProfile({
       email,
-      fullName: "", // Initialize fullName with empty string
+      fullName: "",
       businessName: "",
       industry: "",
       businessSize: "SMB",
@@ -60,7 +64,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsAuthenticated(true);
     setUserProfile({
       email,
-      fullName: profile.fullName || "", // Use fullName from profile or empty string
+      fullName: profile.fullName || "",
       businessName: profile.businessName || "",
       industry: profile.industry || "",
       businessSize: profile.businessSize || "SMB",
