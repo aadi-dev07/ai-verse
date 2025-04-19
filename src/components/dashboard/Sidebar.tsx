@@ -20,6 +20,11 @@ const navItems = [
     href: "/dashboard/prompts"
   },
   {
+    title: "Custom Requests",
+    icon: PenLine,
+    href: "/dashboard/custom-requests"
+  },
+  {
     title: "New Prompt",
     icon: PenLine,
     href: "/new-prompt"

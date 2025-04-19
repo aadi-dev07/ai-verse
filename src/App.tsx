@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,6 +16,7 @@ import Pricing from "./pages/Pricing";
 import MyAutomations from "./pages/MyAutomations";
 import MyPrompts from "./pages/MyPrompts";  // Add this import
 import { AuthProvider } from "./context/AuthContext";
+import CustomRequests from "./pages/CustomRequests";  // Add this import
 
 const queryClient = new QueryClient();
 
@@ -39,6 +39,7 @@ function App() {
               <Route path="/community" element={<Community />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="*" element={<NotFound />} />
+              <Route path="/dashboard/custom-requests" element={<CustomRequests />} />
             </Routes>
           </BrowserRouter>
           <Toaster />
