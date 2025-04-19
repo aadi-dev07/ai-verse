@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +13,7 @@ import Explore from "./pages/Explore";
 import Marketplace from "./pages/Marketplace";
 import Community from "./pages/Community";
 import Pricing from "./pages/Pricing";
+import MyAutomations from "./pages/MyAutomations";
 import { AuthProvider } from "./context/AuthContext";
 
 const queryClient = new QueryClient();
@@ -27,6 +27,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard/automations" element={<MyAutomations />} />
               <Route path="/new-prompt" element={<NewPrompt />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
