@@ -31,7 +31,7 @@ const automationOptions = [
 type BusinessSize = "Solo" | "SMB" | "Enterprise";
 
 interface OnboardingData {
-  businessName: string;
+  business_name: string;
   industry: string;
   businessSize: BusinessSize;
   automationNeeds: string[];
@@ -46,7 +46,7 @@ interface OnboardingFormProps {
 
 const OnboardingForm = ({ initialData, onSubmit, onSkip }: OnboardingFormProps) => {
   const [formData, setFormData] = useState<OnboardingData>({
-    businessName: initialData?.businessName || "",
+    business_name: initialData?.business_name || "",
     industry: initialData?.industry || "",
     businessSize: initialData?.businessSize || "SMB",
     automationNeeds: initialData?.automationNeeds || [],
@@ -84,12 +84,12 @@ const OnboardingForm = ({ initialData, onSubmit, onSkip }: OnboardingFormProps) 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="businessName">Business Name</Label>
+        <Label htmlFor="business_name">Business Name</Label>
         <input
           type="text"
-          id="businessName"
-          name="businessName"
-          value={formData.businessName}
+          id="business_name"
+          name="business_name"
+          value={formData.business_name}
           onChange={handleChange}
           className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-autoverse-400 focus:ring-2 focus:ring-autoverse-200 outline-none transition-all"
           placeholder="Your business name"
