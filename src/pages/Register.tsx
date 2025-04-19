@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -13,13 +12,13 @@ import OnboardingForm from "@/components/auth/OnboardingForm";
 const Register = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    fullName: "",
+    full_name: "",
     email: "",
     password: "",
     acceptTerms: false
   });
   const [onboardingData, setOnboardingData] = useState({
-    businessName: "",
+    business_name: "",
     industry: "",
     businessSize: "SMB" as const,
     automationNeeds: [] as string[],
@@ -47,11 +46,10 @@ const Register = () => {
     setOnboardingData(data);
     try {
       await register(formData.email, formData.password, {
-        fullName: formData.fullName,
-        ...data
+        full_name: formData.full_name,
+        business_name: data.business_name,
       });
     } catch (error) {
-      // Error is already handled in the register function
       console.error("Registration error:", error);
     }
   };
@@ -59,28 +57,17 @@ const Register = () => {
   const skipOnboarding = async () => {
     try {
       await register(formData.email, formData.password, {
-        fullName: formData.fullName,
+        full_name: formData.full_name,
       });
     } catch (error) {
-      // Error is already handled in the register function
       console.error("Registration error:", error);
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      {/* Left Column - Form */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
-          <div className="mb-8 flex items-center gap-2">
-            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-tech-purple to-autoverse-600 flex items-center justify-center">
-              <span className="text-white font-bold text-xl">A</span>
-            </div>
-            <span className="text-xl font-heading font-bold bg-gradient-to-r from-tech-purple to-autoverse-600 bg-clip-text text-transparent">
-              Autoverse
-            </span>
-          </div>
-          
           {step === 1 ? (
             <>
               <h1 className="text-3xl font-heading font-bold mb-2">Create an account</h1>
@@ -88,11 +75,11 @@ const Register = () => {
               
               <form onSubmit={handleFirstStep} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Full name</Label>
+                  <Label htmlFor="full_name">Full name</Label>
                   <Input
-                    id="fullName"
-                    name="fullName"
-                    value={formData.fullName}
+                    id="full_name"
+                    name="full_name"
+                    value={formData.full_name}
                     onChange={handleChange}
                     placeholder="John Doe"
                     required
@@ -209,7 +196,6 @@ const Register = () => {
         </div>
       </div>
       
-      {/* Right Column - Image/Banner */}
       <div className="hidden md:block md:w-1/2 bg-gradient-to-br from-autoverse-500 to-tech-purple">
         <div className="h-full flex flex-col justify-center items-center p-12 text-center">
           <h2 className="text-4xl font-heading font-bold text-white mb-6">
