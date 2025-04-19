@@ -17,17 +17,20 @@ const Navbar = () => {
         </div>
         
         <nav className="hidden md:flex items-center gap-6">
-          <a href="#features" className="text-gray-600 hover:text-autoverse-600 transition-colors">
-            Features
+          <a href="/" className="text-gray-600 hover:text-autoverse-600 transition-colors">
+            Home
           </a>
-          <a href="#how-it-works" className="text-gray-600 hover:text-autoverse-600 transition-colors">
-            How It Works
+          <a href="/explore" className="text-gray-600 hover:text-autoverse-600 transition-colors">
+            Explore
           </a>
-          <a href="#testimonials" className="text-gray-600 hover:text-autoverse-600 transition-colors">
-            Testimonials
+          <a href="/marketplace" className="text-gray-600 hover:text-autoverse-600 transition-colors">
+            Marketplace
           </a>
           <a href="#pricing" className="text-gray-600 hover:text-autoverse-600 transition-colors">
             Pricing
+          </a>
+          <a href="/community" className="text-gray-600 hover:text-autoverse-600 transition-colors">
+            Join the Community
           </a>
         </nav>
         
