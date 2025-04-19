@@ -33,6 +33,7 @@ function App() {
               <Route path="/explore" element={<Explore />} />
               <Route path="/marketplace" element={<Marketplace />} />
               <Route path="/community" element={<Community />} />
+              <Route path="/pricing" element={<Pricing />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

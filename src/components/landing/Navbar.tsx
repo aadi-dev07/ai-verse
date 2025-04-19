@@ -41,12 +41,12 @@ const Navbar = () => {
           >
             Marketplace
           </Link>
-          <a 
-            href="#pricing" 
-            className="text-gray-600 hover:text-autoverse-600 transition-colors"
+          <Link 
+            to="/pricing" 
+            className={`transition-colors ${isActive('/pricing') ? 'text-autoverse-600 font-medium' : 'text-gray-600 hover:text-autoverse-600'}`}
           >
             Pricing
-          </a>
+          </Link>
           <Link 
             to="/community" 
             className={`transition-colors ${isActive('/community') ? 'text-autoverse-600 font-medium' : 'text-gray-600 hover:text-autoverse-600'}`}
