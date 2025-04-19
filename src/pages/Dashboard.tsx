@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Chatbot from "@/components/dashboard/Chatbot";
@@ -60,7 +61,14 @@ const activeWorkflows = [
 const Dashboard = () => {
   const [promptInput, setPromptInput] = useState("");
   const { profile } = useAuth();
-  const userName = profile?.full_name || "User";
+  
+  // Extract first name if full name is present
+  const displayName = profile?.full_name 
+    ? profile.full_name.split(' ')[0] 
+    : (profile?.business_name || "User");
+  
+  console.log("Dashboard rendering with profile:", profile);
+  console.log("Using display name:", displayName);
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -71,7 +79,7 @@ const Dashboard = () => {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
               <h1 className="text-2xl font-heading font-bold mb-1">
-                Welcome back, {userName}!
+                Welcome back, {displayName}!
               </h1>
               <p className="text-gray-600">
                 Here's what's happening with your automations today.

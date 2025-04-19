@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { Home, PenLine, MessageSquare, Users, Settings, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
   {
@@ -39,6 +40,7 @@ const navItems = [
 
 const Sidebar = () => {
   const location = useLocation();
+  const { logout } = useAuth();
   
   return (
     <div className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col shadow-sm">
@@ -75,11 +77,13 @@ const Sidebar = () => {
       </nav>
       
       <div className="p-4 border-t border-gray-100">
-        <Button variant="outline" className="w-full justify-start text-gray-600 hover:text-red-600" asChild>
-          <Link to="/">
-            <LogOut className="mr-2 h-4 w-4" />
-            Logout
-          </Link>
+        <Button 
+          variant="outline" 
+          className="w-full justify-start text-gray-600 hover:text-red-600" 
+          onClick={() => logout()}
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          Logout
         </Button>
       </div>
     </div>
