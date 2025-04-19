@@ -6,17 +6,28 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real application, this would authenticate with a backend
-    navigate("/dashboard");
+    
+    try {
+      // In a real app, this would validate the credentials against a backend
+      login(email, password);
+      toast.success("Successfully logged in!");
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error("Failed to log in. Please check your credentials.");
+      console.error("Login error:", error);
+    }
   };
 
   return (
