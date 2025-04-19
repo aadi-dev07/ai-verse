@@ -13,7 +13,7 @@ import NotFound from "./pages/NotFound";
 import Explore from "./pages/Explore";
 import Marketplace from "./pages/Marketplace";
 import Community from "./pages/Community";
-import { useState } from "react";
+import Pricing from "./pages/Pricing";
 import { AuthProvider } from "./context/AuthContext";
 
 const queryClient = new QueryClient();
