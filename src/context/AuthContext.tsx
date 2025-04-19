@@ -5,6 +5,7 @@ type BusinessSize = "Solo" | "SMB" | "Enterprise";
 
 interface UserProfile {
   email: string;
+  fullName: string; // Added fullName field
   businessName: string;
   industry: string;
   businessSize: BusinessSize;
@@ -45,6 +46,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsAuthenticated(true);
     setUserProfile({
       email,
+      fullName: "", // Initialize fullName with empty string
       businessName: "",
       industry: "",
       businessSize: "SMB",
@@ -58,6 +60,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsAuthenticated(true);
     setUserProfile({
       email,
+      fullName: profile.fullName || "", // Use fullName from profile or empty string
       businessName: profile.businessName || "",
       industry: profile.industry || "",
       businessSize: profile.businessSize || "SMB",
