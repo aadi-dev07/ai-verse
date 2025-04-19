@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -150,7 +151,7 @@ const Marketplace = () => {
                   setCredentials({});
                 }}
               >
-                View Agent
+                Run Agent
               </Button>
             </CardFooter>
           </Card>
