@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Filter, Key, Users, MessageSquare } from "lucide-react";
+import Navbar from "@/components/landing/Navbar";
 
 interface Agent {
   id: number;
@@ -64,8 +65,8 @@ const Marketplace = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-24 min-h-screen">
-      {/* Header Section */}
+    <div className="min-h-screen">
+      <Navbar />
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold font-heading mb-4 bg-gradient-to-r from-tech-purple to-autoverse-600 bg-clip-text text-transparent">
           Discover Agents in the AutoVerse Marketplace
@@ -75,7 +76,6 @@ const Marketplace = () => {
         </p>
       </div>
 
-      {/* Filter Section */}
       <div className="mb-8 flex justify-end max-w-xs ml-auto">
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
           <SelectTrigger className="w-full">
@@ -92,7 +92,6 @@ const Marketplace = () => {
         </Select>
       </div>
 
-      {/* Agents Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredAgents.map((agent) => (
           <Card key={agent.id} className="hover:shadow-lg transition-shadow duration-300">
@@ -115,7 +114,6 @@ const Marketplace = () => {
         ))}
       </div>
 
-      {/* Agent Details Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

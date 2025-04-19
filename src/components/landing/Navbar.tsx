@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { Link, useLocation } from "react-router-dom";
@@ -13,14 +12,14 @@ const Navbar = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-tech-purple to-autoverse-600 flex items-center justify-center">
             <span className="text-white font-bold text-xl">A</span>
           </div>
           <span className="text-xl font-heading font-bold bg-gradient-to-r from-tech-purple to-autoverse-600 bg-clip-text text-transparent">
             Autoverse
           </span>
-        </div>
+        </Link>
         
         <nav className="hidden md:flex items-center gap-6">
           <Link 

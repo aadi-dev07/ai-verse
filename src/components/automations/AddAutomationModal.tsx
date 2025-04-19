@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { FileJson } from "lucide-react";
 
 interface AddAutomationModalProps {
   isOpen: boolean;
@@ -16,8 +17,22 @@ const AddAutomationModal = ({ isOpen, onClose }: AddAutomationModalProps) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [credentials, setCredentials] = useState("");
+  const [jsonFile, setJsonFile] = useState<File | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type === "application/json") {
+      setJsonFile(file);
+    } else {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload a JSON file",
+        duration: 3000,
+      });
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,6 +97,30 @@ const AddAutomationModal = ({ isOpen, onClose }: AddAutomationModalProps) => {
               onChange={(e) => setCredentials(e.target.value)}
               placeholder="API keys, tokens, or links"
             />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="jsonFile" className="text-sm font-medium">
+              Reference JSON File
+            </label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="jsonFile"
+                type="file"
+                accept="application/json"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => document.getElementById('jsonFile')?.click()}
+              >
+                <FileJson className="w-4 h-4 mr-2" />
+                {jsonFile ? jsonFile.name : "Upload JSON File"}
+              </Button>
+            </div>
           </div>
 
           <div className="flex gap-3 justify-end">

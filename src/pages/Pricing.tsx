@@ -1,9 +1,9 @@
-
 import React from "react";
 import { Check } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GradientButton } from "@/components/ui/gradient-button";
+import Navbar from "@/components/landing/Navbar";
 
 interface PricingPlan {
   name: string;
@@ -43,7 +43,8 @@ const pricingPlans: PricingPlan[] = [
 
 const Pricing = () => {
   return (
-    <div className="container mx-auto px-4 py-24 min-h-screen">
+    <div className="min-h-screen">
+      <Navbar />
       <div className="text-center mb-16">
         <h1 className="text-4xl font-bold font-heading mb-4 bg-gradient-to-r from-tech-purple to-autoverse-600 bg-clip-text text-transparent">
           Flexible Plans for Every Business
