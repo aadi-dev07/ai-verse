@@ -13,42 +13,35 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 265 83.3% 45.1%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 260 40% 96.1%;
+    --secondary-foreground: 265 83.3% 45.1%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 260 40% 96.1%;
+    --accent-foreground: 265 83.3% 45.1%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 265 83.3% 45.1%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
+    --sidebar-primary: 265 83.3% 45.1%;
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 265 83.3% 45.1%;
   }
 
   .dark {
@@ -96,6 +89,28 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+
+  /* Custom gradients */
+  .bg-autoverse-gradient {
+    @apply bg-gradient-to-r from-tech-purple to-autoverse-600;
+  }
+
+  .text-autoverse-gradient {
+    @apply bg-gradient-to-r from-tech-purple to-autoverse-600 bg-clip-text text-transparent;
+  }
+
+  /* Hover effects */
+  .hover-scale {
+    @apply transition-transform hover:scale-105;
+  }
+
+  .card-glow {
+    @apply hover:shadow-[0_0_15px_rgba(139,92,246,0.3)] transition-shadow;
   }
 }
