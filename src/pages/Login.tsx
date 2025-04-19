@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -16,12 +15,11 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
-      // In a real app, this would validate the credentials against a backend
-      login(email, password);
+      await login(email, password);
       toast.success("Successfully logged in!");
       navigate("/dashboard");
     } catch (error) {

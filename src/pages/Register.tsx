@@ -36,29 +36,33 @@ const Register = () => {
 
   const handleFirstStep = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.acceptTerms) {
+      toast.error("Please accept the terms and conditions");
+      return;
+    }
     setStep(2);
   };
 
-  const handleOnboardingSubmit = (data: typeof onboardingData) => {
+  const handleOnboardingSubmit = async (data: typeof onboardingData) => {
     setOnboardingData(data);
-    completeRegistration();
-  };
-
-  const skipOnboarding = () => {
-    completeRegistration();
-  };
-
-  const completeRegistration = () => {
     try {
-      // In a real app, this would register with a backend
-      register(formData.email, formData.password, {
-        ...onboardingData,
-        fullName: formData.fullName
+      await register(formData.email, formData.password, {
+        fullName: formData.fullName,
+        ...data
       });
-      toast.success("Registration successful!");
-      navigate("/dashboard");
     } catch (error) {
-      toast.error("Registration failed. Please try again.");
+      // Error is already handled in the register function
+      console.error("Registration error:", error);
+    }
+  };
+
+  const skipOnboarding = async () => {
+    try {
+      await register(formData.email, formData.password, {
+        fullName: formData.fullName,
+      });
+    } catch (error) {
+      // Error is already handled in the register function
       console.error("Registration error:", error);
     }
   };

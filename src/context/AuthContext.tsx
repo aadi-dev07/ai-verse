@@ -1,5 +1,9 @@
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { User, Session } from '@supabase/supabase-js';
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 type BusinessSize = "Solo" | "SMB" | "Enterprise";
 
@@ -16,18 +20,22 @@ interface UserProfile {
 interface AuthContextType {
   isAuthenticated: boolean;
   userProfile: UserProfile | null;
-  login: (email: string, password: string) => void;
-  register: (email: string, password: string, profile: Partial<UserProfile>) => void;
-  logout: () => void;
+  user: User | null;
+  session: Session | null;
+  login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, profile: Partial<UserProfile>) => Promise<void>;
+  logout: () => Promise<void>;
   updateProfile: (profile: Partial<UserProfile>) => void;
 }
 
 const defaultContext: AuthContextType = {
   isAuthenticated: false,
   userProfile: null,
-  login: () => {},
-  register: () => {},
-  logout: () => {},
+  user: null,
+  session: null,
+  login: async () => {},
+  register: async () => {},
+  logout: async () => {},
   updateProfile: () => {},
 };
 
@@ -42,40 +50,111 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const navigate = useNavigate();
 
-  // In a real app, this would connect to a backend service
-  const login = (email: string, password: string) => {
-    console.log("Logging in with", email, password);
-    // Mock login - would be replaced with actual authentication
-    setIsAuthenticated(true);
-    setUserProfile({
-      email,
-      fullName: "",
-      businessName: "",
-      industry: "",
-      businessSize: "SMB",
-      automationNeeds: [],
+  useEffect(() => {
+    // Set up auth state listener first
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, currentSession) => {
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+        setIsAuthenticated(!!currentSession);
+        if (currentSession?.user) {
+          // Set a basic profile when user logs in
+          setUserProfile({
+            email: currentSession.user.email || "",
+            fullName: "",
+            businessName: "",
+            industry: "",
+            businessSize: "SMB",
+            automationNeeds: [],
+          });
+        } else {
+          setUserProfile(null);
+        }
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
+      setIsAuthenticated(!!currentSession);
+      if (currentSession?.user) {
+        setUserProfile({
+          email: currentSession.user.email || "",
+          fullName: "",
+          businessName: "",
+          industry: "",
+          businessSize: "SMB",
+          automationNeeds: [],
+        });
+      }
     });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const login = async (email: string, password: string) => {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      toast.success("Successfully logged in!");
+      navigate("/dashboard");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to log in");
+      throw error;
+    }
   };
 
-  const register = (email: string, password: string, profile: Partial<UserProfile>) => {
-    console.log("Registering", email, profile);
-    // Mock registration - would be replaced with actual authentication
-    setIsAuthenticated(true);
-    setUserProfile({
-      email,
-      fullName: profile.fullName || "",
-      businessName: profile.businessName || "",
-      industry: profile.industry || "",
-      businessSize: profile.businessSize || "SMB",
-      automationNeeds: profile.automationNeeds || [],
-      customNeeds: profile.customNeeds,
-    });
+  const register = async (email: string, password: string, profile: Partial<UserProfile>) => {
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: profile.fullName,
+            business_name: profile.businessName,
+            industry: profile.industry,
+            business_size: profile.businessSize,
+            automation_needs: profile.automationNeeds,
+            custom_needs: profile.customNeeds,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      toast.success("Registration successful! Please check your email to verify your account.");
+      navigate("/dashboard");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to register");
+      throw error;
+    }
   };
 
-  const logout = () => {
-    setIsAuthenticated(false);
-    setUserProfile(null);
+  const logout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      setUserProfile(null);
+      setIsAuthenticated(false);
+      navigate("/login");
+      toast.success("Successfully logged out!");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to log out");
+    }
   };
 
   const updateProfile = (profile: Partial<UserProfile>) => {
@@ -89,6 +168,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       value={{
         isAuthenticated,
         userProfile,
+        user,
+        session,
         login,
         register,
         logout,
