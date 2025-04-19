@@ -43,12 +43,12 @@ const Sidebar = () => {
   return (
     <div className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col shadow-sm">
       <div className="p-4 border-b border-gray-100">
-        <div className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
           <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-tech-purple to-autoverse-600 flex items-center justify-center">
             <span className="text-white font-bold text-sm">A</span>
           </div>
           <span className="text-xl font-heading font-bold">Autoverse</span>
-        </div>
+        </Link>
       </div>
       
       <nav className="flex-1 pt-6 pb-4 overflow-y-auto">
