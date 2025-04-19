@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,9 +15,10 @@ import Marketplace from "./pages/Marketplace";
 import Community from "./pages/Community";
 import Pricing from "./pages/Pricing";
 import MyAutomations from "./pages/MyAutomations";
-import MyPrompts from "./pages/MyPrompts";  // Add this import
+import MyPrompts from "./pages/MyPrompts";
 import { AuthProvider } from "./context/AuthContext";
-import CustomRequests from "./pages/CustomRequests";  // Add this import
+import CustomRequests from "./pages/CustomRequests";
+import ProfileSettings from "./pages/ProfileSettings";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +33,7 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard/automations" element={<MyAutomations />} />
               <Route path="/dashboard/prompts" element={<MyPrompts />} />
+              <Route path="/dashboard/profile" element={<ProfileSettings />} />
               <Route path="/new-prompt" element={<NewPrompt />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
