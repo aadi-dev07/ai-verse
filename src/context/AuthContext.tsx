@@ -134,39 +134,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       console.log("Starting registration with profile data:", profileData);
       
-      // Step 1: First check if user already exists
-      const { data: existingUser, error: checkError } = await supabase.auth.admin
-        .getUserByEmail(email)
-        .catch(() => ({ data: null, error: null }));
-        
-      if (existingUser) {
-        console.log("User already exists with this email");
-        const error = new Error("This email is already registered");
-        // @ts-ignore - Adding custom property to the error
-        error.code = "user_already_exists";
-        throw error;
-      }
-      
-      // Step 2: Register the user
+      // Skip the admin check and directly try to sign up
+      // If the user exists, Supabase will return an error that we'll handle
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
       });
 
       if (authError) {
+        console.error("Auth error during registration:", authError);
+        
         // Check if error is about existing user
-        if (authError.message?.includes("already registered")) {
+        if (authError.message?.includes("already registered") || 
+            authError.message?.includes("already exists") ||
+            authError.message?.toLowerCase().includes("email already")) {
+          
+          console.log("Detected existing user error:", authError.message);
+          const customError = new Error("This email is already registered");
           // @ts-ignore - Adding custom property to the error
-          authError.code = "user_already_exists";
+          customError.code = "user_already_exists";
+          throw customError;
         }
+        
         throw authError;
       }
       
-      if (!authData.user) throw new Error("User registration failed");
+      if (!authData.user) {
+        console.error("No user returned from signUp");
+        throw new Error("User registration failed");
+      }
 
       console.log("User registered successfully, creating profile...");
 
-      // Step 3: Create profile entry with the user data
+      // Create profile entry with the user data
       const { error: profileError } = await supabase
         .from('profiles')
         .upsert({
@@ -198,7 +198,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const errorMessage = error.message || "Failed to register";
       console.error("Registration error:", error);
       
-      if (!error.code && error.message?.includes("already registered")) {
+      // If the error doesn't have a code but mentions "already registered", add the code
+      if (!error.code && 
+          (error.message?.includes("already registered") || 
+           error.message?.includes("already exists") ||
+           error.message?.toLowerCase().includes("email already"))) {
         // @ts-ignore - Adding custom property to the error
         error.code = "user_already_exists";
       }

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -55,10 +56,13 @@ const Register = () => {
       });
       // Registration successful, the navigation is handled in the register function
     } catch (error: any) {
-      console.error("Registration error:", error);
-      // Check for specific error codes
+      console.error("Registration error caught in Register.tsx:", error);
+      
+      // Clear specific error handling
       if (error.code === "user_already_exists") {
         toast.error("This email is already registered. Please try logging in instead.");
+        // Optional: Redirect to login page
+        navigate("/login", { state: { email: formData.email } });
       } else {
         toast.error(error.message || "Failed to register. Please try again.");
       }
@@ -75,10 +79,12 @@ const Register = () => {
       });
       // Registration successful, the navigation is handled in the register function
     } catch (error: any) {
-      console.error("Registration error:", error);
-      // Check for specific error codes
+      console.error("Registration error caught in Register.tsx (skip onboarding):", error);
+      
       if (error.code === "user_already_exists") {
         toast.error("This email is already registered. Please try logging in instead.");
+        // Optional: Redirect to login page
+        navigate("/login", { state: { email: formData.email } });
       } else {
         toast.error(error.message || "Failed to register. Please try again.");
       }
