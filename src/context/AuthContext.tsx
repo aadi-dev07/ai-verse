@@ -5,38 +5,38 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-type BusinessSize = "Solo" | "SMB" | "Enterprise";
-
-interface UserProfile {
-  email: string;
-  fullName: string;
-  businessName: string;
-  industry: string;
-  businessSize: BusinessSize;
-  automationNeeds: string[];
-  customNeeds?: string;
+interface Profile {
+  id: string;
+  full_name: string | null;
+  business_name: string | null;
+  phone: string | null;
+  business_domain: string | null;
+  website_url: string | null;
+  email_notifications: boolean;
+  sms_notifications: boolean;
+  push_notifications: boolean;
 }
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  userProfile: UserProfile | null;
   user: User | null;
   session: Session | null;
+  profile: Profile | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, profile: Partial<UserProfile>) => Promise<void>;
+  register: (email: string, password: string, profile: Partial<Profile>) => Promise<void>;
   logout: () => Promise<void>;
-  updateProfile: (profile: Partial<UserProfile>) => void;
+  updateProfile: (updates: Partial<Profile>) => Promise<void>;
 }
 
 const defaultContext: AuthContextType = {
   isAuthenticated: false,
-  userProfile: null,
   user: null,
   session: null,
+  profile: null,
   login: async () => {},
   register: async () => {},
   logout: async () => {},
-  updateProfile: () => {},
+  updateProfile: async () => {},
 };
 
 const AuthContext = createContext<AuthContextType>(defaultContext);
@@ -49,48 +49,47 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const navigate = useNavigate();
 
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) throw error;
+      if (data) setProfile(data as Profile);
+    } catch (error: any) {
+      console.error('Error fetching profile:', error.message);
+    }
+  };
+
   useEffect(() => {
-    // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         setIsAuthenticated(!!currentSession);
+        
         if (currentSession?.user) {
-          // Set a basic profile when user logs in
-          setUserProfile({
-            email: currentSession.user.email || "",
-            fullName: "",
-            businessName: "",
-            industry: "",
-            businessSize: "SMB",
-            automationNeeds: [],
-          });
+          fetchProfile(currentSession.user.id);
         } else {
-          setUserProfile(null);
+          setProfile(null);
         }
       }
     );
 
-    // Check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       setIsAuthenticated(!!currentSession);
       if (currentSession?.user) {
-        setUserProfile({
-          email: currentSession.user.email || "",
-          fullName: "",
-          businessName: "",
-          industry: "",
-          businessSize: "SMB",
-          automationNeeds: [],
-        });
+        fetchProfile(currentSession.user.id);
       }
     });
 
@@ -116,20 +115,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const register = async (email: string, password: string, profile: Partial<UserProfile>) => {
+  const register = async (email: string, password: string, profileData: Partial<Profile>) => {
     try {
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            full_name: profile.fullName,
-            business_name: profile.businessName,
-            industry: profile.industry,
-            business_size: profile.businessSize,
-            automation_needs: profile.automationNeeds,
-            custom_needs: profile.customNeeds,
-          },
+          data: profileData,
         },
       });
 
@@ -148,7 +140,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
-      setUserProfile(null);
+      setProfile(null);
       setIsAuthenticated(false);
       navigate("/login");
       toast.success("Successfully logged out!");
@@ -157,9 +149,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const updateProfile = (profile: Partial<UserProfile>) => {
-    if (userProfile) {
-      setUserProfile({ ...userProfile, ...profile });
+  const updateProfile = async (updates: Partial<Profile>) => {
+    try {
+      if (!user?.id) throw new Error("No user logged in");
+
+      const { error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      setProfile(prev => prev ? { ...prev, ...updates } : null);
+      toast.success("Profile updated successfully!");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to update profile");
+      throw error;
     }
   };
 
@@ -167,9 +172,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     <AuthContext.Provider
       value={{
         isAuthenticated,
-        userProfile,
         user,
         session,
+        profile,
         login,
         register,
         logout,

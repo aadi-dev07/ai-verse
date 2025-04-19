@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -45,7 +44,7 @@ const formSchema = z.object({
 });
 
 function ProfileSettings() {
-  const { userProfile, updateProfile } = useAuth();
+  const { profile, updateProfile } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -53,68 +52,63 @@ function ProfileSettings() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      fullName: userProfile?.fullName || "",
-      email: userProfile?.email || "",
-      phone: "",
-      businessName: userProfile?.businessName || "",
-      businessDomain: userProfile?.industry || "",
-      websiteUrl: "",
+      fullName: profile?.full_name || "",
+      email: profile?.id || "",
+      phone: profile?.phone || "",
+      businessName: profile?.business_name || "",
+      businessDomain: profile?.business_domain || "",
+      websiteUrl: profile?.website_url || "",
       currentPassword: "",
       newPassword: "",
       confirmPassword: "",
-      emailNotifications: true,
-      smsNotifications: false,
-      pushNotifications: true,
+      emailNotifications: profile?.email_notifications || true,
+      smsNotifications: profile?.sms_notifications || false,
+      pushNotifications: profile?.push_notifications || true,
     },
   });
 
-  // Update form when user profile changes
   useEffect(() => {
-    if (userProfile) {
+    if (profile) {
       form.reset({
-        fullName: userProfile.fullName || "",
-        email: userProfile.email || "",
-        phone: "",
-        businessName: userProfile.businessName || "",
-        businessDomain: userProfile.industry || "",
-        websiteUrl: "",
+        fullName: profile.full_name || "",
+        email: profile.id || "",
+        phone: profile.phone || "",
+        businessName: profile.business_name || "",
+        businessDomain: profile.business_domain || "",
+        websiteUrl: profile.website_url || "",
         currentPassword: "",
         newPassword: "",
         confirmPassword: "",
-        emailNotifications: true,
-        smsNotifications: false,
-        pushNotifications: true,
+        emailNotifications: profile.email_notifications,
+        smsNotifications: profile.sms_notifications,
+        pushNotifications: profile.push_notifications,
       });
     }
-  }, [userProfile, form]);
+  }, [profile, form]);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    
-    // Simulate API call delay
-    setTimeout(() => {
-      // Update profile in context
-      updateProfile({
-        fullName: values.fullName,
-        email: values.email,
-        businessName: values.businessName,
-        industry: values.businessDomain,
-      });
-      
-      // Show success message
-      toast({
-        title: "Profile updated",
-        description: "Your profile has been updated successfully.",
-        variant: "default",
+    try {
+      await updateProfile({
+        full_name: values.fullName,
+        phone: values.phone,
+        business_name: values.businessName,
+        business_domain: values.businessDomain,
+        website_url: values.websiteUrl,
+        email_notifications: values.emailNotifications,
+        sms_notifications: values.smsNotifications,
+        push_notifications: values.pushNotifications,
       });
       
       // Reset password fields
       form.setValue("currentPassword", "");
       form.setValue("newPassword", "");
       form.setValue("confirmPassword", "");
-      
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

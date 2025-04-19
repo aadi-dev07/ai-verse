@@ -1,7 +1,7 @@
-
 import { useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Chatbot from "@/components/dashboard/Chatbot";
+import { useAuth } from "@/context/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { Mail, PhoneCall, MessageCircle, Users, ArrowRight, Play, Pause, AlertCircle } from "lucide-react";
@@ -59,7 +59,8 @@ const activeWorkflows = [
 
 const Dashboard = () => {
   const [promptInput, setPromptInput] = useState("");
-  const userName = "Sarah";
+  const { profile } = useAuth();
+  const userName = profile?.full_name || "User";
 
   return (
     <div className="flex h-screen bg-gray-50">
