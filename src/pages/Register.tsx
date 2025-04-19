@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -48,6 +49,7 @@ const Register = () => {
       await register(formData.email, formData.password, {
         full_name: formData.full_name,
         business_name: data.business_name,
+        business_domain: data.industry,
       });
     } catch (error) {
       console.error("Registration error:", error);

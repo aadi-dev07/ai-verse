@@ -117,15 +117,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (email: string, password: string, profileData: Partial<Profile>) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      // Step 1: Register the user
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          data: profileData,
-        },
       });
 
-      if (error) throw error;
+      if (authError) throw authError;
+      if (!authData.user) throw new Error("User registration failed");
+
+      // Step 2: Create profile entry with the user data
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: authData.user.id,
+          full_name: profileData.full_name,
+          business_name: profileData.business_name,
+          phone: profileData.phone,
+          business_domain: profileData.business_domain,
+          website_url: profileData.website_url,
+          email_notifications: true,
+          sms_notifications: false,
+          push_notifications: true,
+        });
+
+      if (profileError) {
+        console.error('Error creating profile:', profileError);
+        // We don't throw here to avoid blocking the process if profile creation fails
+      }
 
       toast.success("Registration successful! Please check your email to verify your account.");
       navigate("/dashboard");
@@ -160,6 +179,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (error) throw error;
 
+      // Update local profile state
       setProfile(prev => prev ? { ...prev, ...updates } : null);
       toast.success("Profile updated successfully!");
     } catch (error: any) {

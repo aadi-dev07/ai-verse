@@ -1,10 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { User, UserCheck, Building, Globe, Lock, Bell } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import {
@@ -44,34 +45,33 @@ const formSchema = z.object({
 });
 
 function ProfileSettings() {
-  const { profile, updateProfile } = useAuth();
-  const { toast } = useToast();
+  const { profile, updateProfile, user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      fullName: profile?.full_name || "",
-      email: profile?.id || "",
-      phone: profile?.phone || "",
-      businessName: profile?.business_name || "",
-      businessDomain: profile?.business_domain || "",
-      websiteUrl: profile?.website_url || "",
+      fullName: "",
+      email: "",
+      phone: "",
+      businessName: "",
+      businessDomain: "",
+      websiteUrl: "",
       currentPassword: "",
       newPassword: "",
       confirmPassword: "",
-      emailNotifications: profile?.email_notifications || true,
-      smsNotifications: profile?.sms_notifications || false,
-      pushNotifications: profile?.push_notifications || true,
+      emailNotifications: true,
+      smsNotifications: false,
+      pushNotifications: true,
     },
   });
 
   useEffect(() => {
-    if (profile) {
+    if (profile && user) {
       form.reset({
         fullName: profile.full_name || "",
-        email: profile.id || "",
+        email: user.email || "",
         phone: profile.phone || "",
         businessName: profile.business_name || "",
         businessDomain: profile.business_domain || "",
@@ -84,11 +84,15 @@ function ProfileSettings() {
         pushNotifications: profile.push_notifications,
       });
     }
-  }, [profile, form]);
+  }, [profile, user, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
+      // If there's a new password, handle password update (not implemented in this update)
+      // For now, we'll focus on profile updates
+
+      // Update profile
       await updateProfile({
         full_name: values.fullName,
         phone: values.phone,
@@ -106,6 +110,7 @@ function ProfileSettings() {
       form.setValue("confirmPassword", "");
     } catch (error) {
       console.error('Error updating profile:', error);
+      toast.error("Failed to update profile. Please try again.");
     } finally {
       setIsLoading(false);
     }
