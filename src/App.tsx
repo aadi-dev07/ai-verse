@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +15,7 @@ import Marketplace from "./pages/Marketplace";
 import Community from "./pages/Community";
 import Pricing from "./pages/Pricing";
 import MyAutomations from "./pages/MyAutomations";
+import MyPrompts from "./pages/MyPrompts";  // Add this import
 import { AuthProvider } from "./context/AuthContext";
 
 const queryClient = new QueryClient();
