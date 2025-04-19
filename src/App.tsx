@@ -28,6 +28,7 @@ function App() {
               <Route path="/" element={<Index />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard/automations" element={<MyAutomations />} />
+              <Route path="/dashboard/prompts" element={<MyPrompts />} />
               <Route path="/new-prompt" element={<NewPrompt />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />

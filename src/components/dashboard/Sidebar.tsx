@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { Home, PenLine, MessageSquare, Users, Settings, LogOut } from "lucide-react";
@@ -16,14 +15,14 @@ const navItems = [
     href: "/dashboard/automations"
   },
   {
-    title: "New Prompt",
-    icon: PenLine,
-    href: "/dashboard/new-prompt"
+    title: "My Prompts",
+    icon: MessageSquare,
+    href: "/dashboard/prompts"
   },
   {
-    title: "Custom Requests",
-    icon: MessageSquare,
-    href: "/dashboard/requests"
+    title: "New Prompt",
+    icon: PenLine,
+    href: "/new-prompt"
   },
   {
     title: "Profile",
