@@ -132,10 +132,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (email: string, password: string, profileData: Partial<Profile>) => {
     try {
-      console.log("Starting registration with profile data:", profileData);
+      console.log("Starting registration with email:", email);
       
-      // Skip the admin check and directly try to sign up
-      // If the user exists, Supabase will return an error that we'll handle
+      // First, check if user exists with this email
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password: "dummy-password-for-check", // Using a dummy password to check if user exists
+      });
+      
+      // If sign in works (even with wrong password), user exists
+      if (data?.user) {
+        console.log("User already exists with this email (sign-in check)");
+        const customError = new Error("This email is already registered");
+        // @ts-ignore - Adding custom property to the error
+        customError.code = "user_already_exists";
+        throw customError;
+      }
+      
+      // If error is not about invalid credentials, it could be another issue
+      if (signInError && !signInError.message.toLowerCase().includes("invalid")) {
+        console.error("Unexpected error during existence check:", signInError);
+      }
+      
+      console.log("No existing user found, proceeding with registration");
+      
+      // Now try to register the user
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -144,12 +165,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (authError) {
         console.error("Auth error during registration:", authError);
         
-        // Check if error is about existing user
-        if (authError.message?.includes("already registered") || 
-            authError.message?.includes("already exists") ||
+        // Handle any existing user errors from signUp
+        if (authError.message?.toLowerCase().includes("already registered") || 
+            authError.message?.toLowerCase().includes("already exists") ||
             authError.message?.toLowerCase().includes("email already")) {
           
-          console.log("Detected existing user error:", authError.message);
+          console.log("Supabase reports user already exists:", authError.message);
           const customError = new Error("This email is already registered");
           // @ts-ignore - Adding custom property to the error
           customError.code = "user_already_exists";
@@ -159,12 +180,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw authError;
       }
       
-      if (!authData.user) {
+      if (!authData?.user) {
         console.error("No user returned from signUp");
-        throw new Error("User registration failed");
+        throw new Error("Registration failed - no user data returned");
       }
 
-      console.log("User registered successfully, creating profile...");
+      console.log("User registered successfully with ID:", authData.user.id);
+      console.log("Creating profile for new user...");
 
       // Create profile entry with the user data
       const { error: profileError } = await supabase
@@ -195,19 +217,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       navigate("/dashboard");
     } catch (error: any) {
       // Ensure we preserve the error code if it exists
-      const errorMessage = error.message || "Failed to register";
       console.error("Registration error:", error);
       
-      // If the error doesn't have a code but mentions "already registered", add the code
-      if (!error.code && 
-          (error.message?.includes("already registered") || 
-           error.message?.includes("already exists") ||
-           error.message?.toLowerCase().includes("email already"))) {
-        // @ts-ignore - Adding custom property to the error
-        error.code = "user_already_exists";
+      // If the error has the user_already_exists code, propagate it
+      if (error.code === "user_already_exists") {
+        throw error;
       }
       
-      throw error;
+      // For other errors, add useful context
+      throw new Error(error.message || "Failed to register");
     }
   };
 

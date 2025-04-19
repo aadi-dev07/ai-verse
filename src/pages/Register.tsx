@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -49,19 +48,18 @@ const Register = () => {
     setIsSubmitting(true);
     
     try {
+      console.log("Attempting registration with email:", formData.email);
       await register(formData.email, formData.password, {
         full_name: formData.full_name,
         business_name: data.business_name,
         business_domain: data.industry,
       });
-      // Registration successful, the navigation is handled in the register function
+      // Registration successful, navigation handled in register function
     } catch (error: any) {
       console.error("Registration error caught in Register.tsx:", error);
       
-      // Clear specific error handling
       if (error.code === "user_already_exists") {
         toast.error("This email is already registered. Please try logging in instead.");
-        // Optional: Redirect to login page
         navigate("/login", { state: { email: formData.email } });
       } else {
         toast.error(error.message || "Failed to register. Please try again.");
@@ -74,16 +72,16 @@ const Register = () => {
     setIsSubmitting(true);
     
     try {
+      console.log("Attempting registration with email (skip onboarding):", formData.email);
       await register(formData.email, formData.password, {
         full_name: formData.full_name,
       });
-      // Registration successful, the navigation is handled in the register function
+      // Registration successful, navigation handled in register function
     } catch (error: any) {
       console.error("Registration error caught in Register.tsx (skip onboarding):", error);
       
       if (error.code === "user_already_exists") {
         toast.error("This email is already registered. Please try logging in instead.");
-        // Optional: Redirect to login page
         navigate("/login", { state: { email: formData.email } });
       } else {
         toast.error(error.message || "Failed to register. Please try again.");
