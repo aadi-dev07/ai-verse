@@ -10,6 +10,7 @@ import NewPrompt from "./pages/NewPrompt";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
+import Explore from "./pages/Explore";
 import { useState } from "react";
 import { AuthProvider } from "./context/AuthContext";
 
@@ -31,6 +32,7 @@ const App = () => {
               <Route path="/dashboard/new-prompt" element={<NewPrompt />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/explore" element={<Explore />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

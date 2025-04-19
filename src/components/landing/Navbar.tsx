@@ -1,9 +1,15 @@
 
 import { Button } from "@/components/ui/button";
 import { GradientButton } from "@/components/ui/gradient-button";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
+  const location = useLocation();
+  
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
+  
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -17,21 +23,36 @@ const Navbar = () => {
         </div>
         
         <nav className="hidden md:flex items-center gap-6">
-          <a href="/" className="text-gray-600 hover:text-autoverse-600 transition-colors">
+          <Link 
+            to="/" 
+            className={`transition-colors ${isActive('/') ? 'text-autoverse-600 font-medium' : 'text-gray-600 hover:text-autoverse-600'}`}
+          >
             Home
-          </a>
-          <a href="/explore" className="text-gray-600 hover:text-autoverse-600 transition-colors">
+          </Link>
+          <Link 
+            to="/explore" 
+            className={`transition-colors ${isActive('/explore') ? 'text-autoverse-600 font-medium' : 'text-gray-600 hover:text-autoverse-600'}`}
+          >
             Explore
-          </a>
-          <a href="/marketplace" className="text-gray-600 hover:text-autoverse-600 transition-colors">
+          </Link>
+          <Link 
+            to="/marketplace" 
+            className={`transition-colors ${isActive('/marketplace') ? 'text-autoverse-600 font-medium' : 'text-gray-600 hover:text-autoverse-600'}`}
+          >
             Marketplace
-          </a>
-          <a href="#pricing" className="text-gray-600 hover:text-autoverse-600 transition-colors">
+          </Link>
+          <a 
+            href="#pricing" 
+            className="text-gray-600 hover:text-autoverse-600 transition-colors"
+          >
             Pricing
           </a>
-          <a href="/community" className="text-gray-600 hover:text-autoverse-600 transition-colors">
+          <Link 
+            to="/community" 
+            className={`transition-colors ${isActive('/community') ? 'text-autoverse-600 font-medium' : 'text-gray-600 hover:text-autoverse-600'}`}
+          >
             Join the Community
-          </a>
+          </Link>
         </nav>
         
         <div className="flex items-center gap-3">
