@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GradientButton } from "@/components/ui/gradient-button";
@@ -25,6 +24,7 @@ const Register = () => {
     automationNeeds: [] as string[],
     customNeeds: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
   const { register } = useAuth();
@@ -45,24 +45,44 @@ const Register = () => {
 
   const handleOnboardingSubmit = async (data: typeof onboardingData) => {
     setOnboardingData(data);
+    setIsSubmitting(true);
+    
     try {
       await register(formData.email, formData.password, {
         full_name: formData.full_name,
         business_name: data.business_name,
         business_domain: data.industry,
       });
-    } catch (error) {
+      // Registration successful, the navigation is handled in the register function
+    } catch (error: any) {
       console.error("Registration error:", error);
+      // Check for specific error codes
+      if (error.code === "user_already_exists") {
+        toast.error("This email is already registered. Please try logging in instead.");
+      } else {
+        toast.error(error.message || "Failed to register. Please try again.");
+      }
+      setIsSubmitting(false);
     }
   };
 
   const skipOnboarding = async () => {
+    setIsSubmitting(true);
+    
     try {
       await register(formData.email, formData.password, {
         full_name: formData.full_name,
       });
-    } catch (error) {
+      // Registration successful, the navigation is handled in the register function
+    } catch (error: any) {
       console.error("Registration error:", error);
+      // Check for specific error codes
+      if (error.code === "user_already_exists") {
+        toast.error("This email is already registered. Please try logging in instead.");
+      } else {
+        toast.error(error.message || "Failed to register. Please try again.");
+      }
+      setIsSubmitting(false);
     }
   };
 
