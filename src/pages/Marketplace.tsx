@@ -4,7 +4,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Filter, Key, Users, MessageSquare } from "lucide-react";
+import { Filter, Key, MessageSquare } from "lucide-react";
+import { toast } from "sonner";
 import Navbar from "@/components/landing/Navbar";
 
 interface Agent {
@@ -13,6 +14,7 @@ interface Agent {
   description: string;
   category: string;
   credentials: Array<{ key: string; label: string; type: string }>;
+  webhookUrl?: string;
 }
 
 const agents: Agent[] = [
@@ -44,6 +46,18 @@ const agents: Agent[] = [
       { key: "access_key", label: "Access Key", type: "password" },
       { key: "organization_id", label: "Organization ID", type: "text" }
     ]
+  },
+  {
+    id: 4,
+    name: "Lead Collector",
+    description: "Collect and manage leads through a simple form submission process",
+    category: "Lead Generation",
+    credentials: [
+      { key: "name", label: "Name", type: "text" },
+      { key: "email", label: "Email", type: "email" },
+      { key: "message", label: "Message", type: "text" }
+    ],
+    webhookUrl: "https://agentmart.app.n8n.cloud/webhook-test/form-entry"
   }
 ];
 
@@ -54,14 +68,42 @@ const Marketplace = () => {
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [credentials, setCredentials] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const filteredAgents = agents.filter(
     agent => selectedCategory === "All" || agent.category === selectedCategory
   );
 
-  const handleRunAgent = () => {
-    console.log("Running agent with credentials:", credentials);
-    // Add agent execution logic here
+  const handleRunAgent = async () => {
+    if (!selectedAgent) return;
+
+    setIsSubmitting(true);
+    try {
+      if (selectedAgent.webhookUrl) {
+        const response = await fetch(selectedAgent.webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(credentials),
+        });
+
+        if (response.ok) {
+          toast.success("Form submitted successfully!");
+          setIsModalOpen(false);
+          setCredentials({});
+        } else {
+          throw new Error("Failed to submit form");
+        }
+      } else {
+        console.log("Running agent with credentials:", credentials);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Failed to submit form. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -105,6 +147,7 @@ const Marketplace = () => {
                 onClick={() => {
                   setSelectedAgent(agent);
                   setIsModalOpen(true);
+                  setCredentials({});
                 }}
               >
                 View Agent
@@ -138,6 +181,7 @@ const Marketplace = () => {
                       [cred.key]: e.target.value,
                     }))
                   }
+                  value={credentials[cred.key] || ""}
                 />
               </div>
             ))}
@@ -145,9 +189,16 @@ const Marketplace = () => {
           <Button
             onClick={handleRunAgent}
             className="w-full bg-gradient-to-r from-tech-purple to-autoverse-600 hover:from-autoverse-600 hover:to-tech-purple"
+            disabled={isSubmitting}
           >
-            <Key className="w-4 h-4 mr-2" />
-            Run Agent
+            {isSubmitting ? (
+              "Submitting..."
+            ) : (
+              <>
+                <MessageSquare className="w-4 h-4 mr-2" />
+                {selectedAgent?.webhookUrl ? "Submit Form" : "Run Agent"}
+              </>
+            )}
           </Button>
         </DialogContent>
       </Dialog>
