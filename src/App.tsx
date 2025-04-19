@@ -15,3 +15,33 @@ import Marketplace from "./pages/Marketplace";
 import Community from "./pages/Community";
 import { useState } from "react";
 import { AuthProvider } from "./context/AuthContext";
+
+const queryClient = new QueryClient();
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/new-prompt" element={<NewPrompt />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/explore" element={<Explore />} />
+              <Route path="/marketplace" element={<Marketplace />} />
+              <Route path="/community" element={<Community />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+          <Toaster />
+          <Sonner />
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+}
+
+export default App;
